@@ -28,10 +28,10 @@ namespace SporSalonu.Data
                     EmailConfirmed = true
                 };
 
-                // Kullanıcıyı oluştur
+                
                 var result = await userManager.CreateAsync(newAdmin, "sau"); 
 
-                // Admin rolünü ata
+                
                 if (result.Succeeded)
                 {
                     await userManager.AddToRoleAsync(newAdmin, "Admin");
