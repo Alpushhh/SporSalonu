@@ -1,38 +1,40 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+// Kendi proje isminle deÄŸiÅŸtir (Ã¶rn: SporSalonu veya SporSalonuYonetim)
 using SporSalonu.Data;
 using SporSalonu.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Veritabaný Baðlantý Ayarý (Connection String)
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+// 1. VeritabanÄ± BaÄŸlantÄ±sÄ±
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// 2. Identity (Üyelik Sistemi) Ayarlarý
-// Admin ve Üye rolleri için IdentityRole ekledik
+// 2. Identity (Ãœyelik) Sistemi
+// DÄ°KKAT: Sadece burasÄ± olmalÄ±. BaÅŸka AddDefaultIdentity veya AddAuthentication olmamalÄ±.
 builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-// 3. Þifre Zorluðunu Kaldýrma (Geliþtirme aþamasýnda kolaylýk olsun diye)
+// Åžifre kurallarÄ± (GeliÅŸtirme iÃ§in basit)
 builder.Services.Configure<IdentityOptions>(options =>
 {
-    options.Password.RequireDigit = false; // Rakam zorunlu deðil
+    options.Password.RequireDigit = false;
     options.Password.RequireLowercase = false;
-    options.Password.RequireNonAlphanumeric = false; // Sembol zorunlu deðil
+    options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
-    options.Password.RequiredLength = 3; // En az 3 karakter
+    options.Password.RequiredLength = 3;
 });
 
-// MVC Servislerini Ekleme
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages(); // Identity sayfalarÄ± iÃ§in ÅŸart
 
 var app = builder.Build();
 
-// Hata Yönetimi ve Güvenlik
+// Hata YÃ¶netimi
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -44,13 +46,14 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// 4. Yetkilendirme Sýralamasý (Burasý Önemli)
-app.UseAuthentication(); // Kimlik Doðrulama (Login oldum mu?)
-app.UseAuthorization();  // Yetkilendirme (Bu sayfaya girmeye yetkim var mý?)
+// 3. SÄ±ralama Ã–nemli: Ã–nce Kimlik DoÄŸrulama, Sonra Yetki
+app.UseAuthentication();
+app.UseAuthorization();
 
-// Varsayýlan Rota Ayarý
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapRazorPages(); // Login/Register sayfalarÄ±nÄ± aktif eder
 
 app.Run();
