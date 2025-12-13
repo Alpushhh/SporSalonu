@@ -1,15 +1,21 @@
-﻿namespace SporSalonu.Models // Burası senin proje isminle aynı kalsın
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace SporSalonu.Models
 {
     public class Trainer
     {
         public int TrainerId { get; set; }
+
+        [Display(Name = "Ad Soyad")]
         public string FullName { get; set; }
-        public string Expertise { get; set; }
 
-        // Soru işareti (?) ekledik: Artık boş bırakılabilir
-        public string? PhotoUrl { get; set; }
+        [Display(Name = "Uzmanlık Alanı")]
+        public string Expertise { get; set; } // Fitness, Yoga vb.
 
-        // Soru işareti (?) ekledik: Artık sistem burası boş diye kızmaz
+        [Display(Name = "Fotoğraf")]
+        public string? PhotoUrl { get; set; } // Resim
+
+        // Randevular listesi ekranda görünmez ama koda dursun
         public ICollection<Appointment>? Appointments { get; set; }
     }
 }
