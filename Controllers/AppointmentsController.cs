@@ -34,7 +34,7 @@ namespace SporSalonu.Controllers
                     .Include(a => a.Member)
                     .OrderByDescending(a => a.AppointmentDate)
                     .ToListAsync();
-                return View("IndexAdmin", allAppointments); // Admin için ayrı view
+                return View("IndexAdmin", allAppointments); 
             }
 
             
