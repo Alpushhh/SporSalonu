@@ -20,7 +20,7 @@ namespace SporSalonu.Controllers
             _userManager = userManager;
         }
 
-        // 1. Üyenin Kendi Randevularını Listeleme
+        
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
