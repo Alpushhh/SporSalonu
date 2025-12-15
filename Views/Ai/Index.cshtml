@@ -1,0 +1,75 @@
+﻿@model SporSalonu.Models.AppUser
+
+@{
+    ViewData["Title"] = "AI Antrenör";
+    // Yaş hesaplama
+    int age = Model.BirthYear.HasValue ? DateTime.Now.Year - Model.BirthYear.Value : 25;
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-robot"></i> AI Antrenör</h4>
+                </div>
+                <div class="card-body">
+                    <p>Fiziksel bilgilerinizi girin, Yapay Zeka size özel tavsiye versin.</p>
+
+                    <form asp-action="GetAdvice" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">Yaşınız</label>
+                            <input type="number" name="age" class="form-control" value="@age" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Kilo (kg)</label>
+                            <input type="number" name="weight" class="form-control" value="@(Model.Weight ?? 70)" step="0.1" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Boy (cm)</label>
+                            <input type="number" name="height" class="form-control" value="@(Model.Height ?? 175)" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Hedefiniz</label>
+                            <select name="goal" class="form-select">
+                                <option value="Kilo Vermek">Kilo Vermek (Yağ Yakımı)</option>
+                                <option value="Kas Yapmak">Kas Yapmak (Hacim)</option>
+                                <option value="Sağlıklı Yaşamak">Fit Kalmak / Kondisyon</option>
+                            </select>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-warning text-dark fw-bold">
+                                <i class="bi bi-stars"></i> Tavsiye Oluştur
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            @if (ViewBag.Result != null)
+            {
+                <div class="card border-warning shadow">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0">Gemini AI Tavsiyesi:</h5>
+                    </div>
+                    <div class="card-body bg-light">
+                        <p class="card-text lead" style="font-size: 1.1rem;">
+                            @Html.Raw(ViewBag.Result)
+                        </p>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info mt-3 mt-md-0">
+                    Henüz bir tavsiye oluşturmadınız. Sol taraftan bilgilerinizi girip butona basın.
+                    <br /><br />
+                    <em>Bu sistem <strong>Google Gemini AI</strong> altyapısını kullanmaktadır.</em>
+                </div>
+            }
+        </div>
+    </div>
+</div>
