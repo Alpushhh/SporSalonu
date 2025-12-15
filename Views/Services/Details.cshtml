@@ -1,36 +1,48 @@
 ﻿@model SporSalonu.Models.Service
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Hizmet Detayı";
 }
 
-<h1>Details</h1>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Hizmet Detayları</h4>
+                </div>
+                <div class="card-body">
 
-<div>
-    <h4>Service</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ServiceName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ServiceName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DurationMinutes)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DurationMinutes)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.ServiceId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+                    <div class="text-center mb-4">
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                        {
+                            <img src="@Model.ImageUrl" alt="@Model.ServiceName" class="img-fluid rounded shadow-sm" style="max-height: 300px;">
+                        }
+                    </div>
+
+                    <dl class="row fs-5">
+                        <dt class="col-sm-4 text-muted">Hizmet Adı:</dt>
+                        <dd class="col-sm-8 fw-bold">@Html.DisplayFor(model => model.ServiceName)</dd>
+
+                        <dt class="col-sm-4 text-muted">Açıklama:</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Description)</dd>
+
+                        <dt class="col-sm-4 text-muted">Süre:</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.DurationMinutes) dakika</dd>
+
+                        <dt class="col-sm-4 text-muted">Ücret:</dt>
+                        <dd class="col-sm-8 text-success fw-bold">@Html.DisplayFor(model => model.Price) ₺</dd>
+                    </dl>
+                </div>
+                <div class="card-footer bg-light d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Listeye Dön</a>
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model?.ServiceId" class="btn btn-warning px-4">Düzenle</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

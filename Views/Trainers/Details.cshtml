@@ -1,36 +1,70 @@
 ﻿@model SporSalonu.Models.Trainer
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Eğitmen Detayı";
 }
 
-<h1>Details</h1>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-dark text-white d-flex align-items-center gap-3">
+                    @if (!string.IsNullOrEmpty(Model.PhotoUrl))
+                    {
+                        <img src="@Model.PhotoUrl" alt="@Model.FullName" class="rounded-circle border border-2 border-white" style="width: 50px; height: 50px; object-fit: cover;">
+                    }
+                    <h4 class="mb-0">@Model.FullName</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-3 mb-md-0">
+                            @if (!string.IsNullOrEmpty(Model.PhotoUrl))
+                            {
+                                <img src="@Model.PhotoUrl" alt="@Model.FullName" class="img-fluid rounded shadow" style="width: 100%; object-fit: cover;">
+                            }
+                            else
+                            {
+                                <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded" style="height: 200px;">
+                                    <span>Fotoğraf Yok</span>
+                                </div>
+                            }
+                        </div>
 
-<div>
-    <h4>Trainer</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FullName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FullName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Expertise)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Expertise)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PhotoUrl)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PhotoUrl)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.TrainerId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+                        <div class="col-md-8">
+                            <dl class="row fs-5">
+                                <dt class="col-sm-4 text-muted">Uzmanlık:</dt>
+                                <dd class="col-sm-8 fw-bold">@Html.DisplayFor(model => model.Expertise)</dd>
+
+                                <dt class="col-sm-4 text-muted">Mesai:</dt>
+                                <dd class="col-sm-8">@Model.WorkStartHour:00 - @Model.WorkEndHour:00</dd>
+
+                                <dt class="col-sm-4 text-muted">Verdiği Dersler:</dt>
+                                <dd class="col-sm-8">
+                                    @if (Model.TrainerServices != null && Model.TrainerServices.Any())
+                                    {
+                                        @foreach (var ts in Model.TrainerServices)
+                                        {
+                                            <span class="badge bg-info text-dark me-1">@ts.Service.ServiceName</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">Ders atanmamış</span>
+                                    }
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-light d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Listeye Dön</a>
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model?.TrainerId" class="btn btn-warning px-4">Düzenle</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
