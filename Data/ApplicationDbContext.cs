@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SporSalonu.Models;
 
 namespace SporSalonu.Data
 {
+    // DİKKAT: IdentityDbContext<AppUser> olmalı
     public class ApplicationDbContext : IdentityDbContext<AppUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -15,43 +15,25 @@ namespace SporSalonu.Data
         public DbSet<Trainer> Trainers { get; set; }
         public DbSet<Service> Services { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
+        public DbSet<TrainerService> TrainerServices { get; set; }
 
-        // BU KISMI EKLİYORUZ: Veritabanı oluşurken çalışacak kodlar
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            // 1. Rolleri Tanımla (Admin ve Uye)
-            builder.Entity<IdentityRole>().HasData(
-                new IdentityRole { Id = "1", Name = "Admin", NormalizedName = "ADMIN" },
-                new IdentityRole { Id = "2", Name = "Uye", NormalizedName = "UYE" }
-            );
+            // Çoka-Çok İlişki (Antrenör - Hizmet)
+            builder.Entity<TrainerService>()
+                .HasKey(ts => new { ts.TrainerId, ts.ServiceId });
 
-            // 2. Admin Kullanıcısını Oluştur
-            var hasher = new PasswordHasher<AppUser>();
-            builder.Entity<AppUser>().HasData(
-                new AppUser
-                {
-                    Id = "a1",
-                    UserName = "g231210029@sakarya.edu.tr", // BURAYA KENDİ NUMARANI YAZ
-                    NormalizedUserName = "G231210029@SAKARYA.EDU.TR", // BURAYA KENDİ NUMARANI YAZ (BÜYÜK HARFLE)
-                    Email = "g232210029@sakarya.edu.tr", // BURAYA KENDİ NUMARANI YAZ
-                    NormalizedEmail = "G231210029@SAKARYA.EDU.TR", // BURAYA KENDİ NUMARANI YAZ (BÜYÜK HARFLE)
-                    EmailConfirmed = true,
-                    FullName = "Admin Kullanıcı",
-                    PasswordHash = hasher.HashPassword(null, "sau") // Şifre: sau
-                }
-            );
+            builder.Entity<TrainerService>()
+                .HasOne(ts => ts.Trainer)
+                .WithMany(t => t.TrainerServices)
+                .HasForeignKey(ts => ts.TrainerId);
 
-            // 3. Kullanıcıya Admin Rolünü Ata
-            builder.Entity<IdentityUserRole<string>>().HasData(
-                new IdentityUserRole<string> { RoleId = "1", UserId = "a1" }
-            );
-
-            // Decimal uyarısını düzeltmek için (Opsiyonel ama temiz kod için)
-            builder.Entity<Service>()
-                .Property(s => s.Price)
-                .HasColumnType("decimal(18,2)");
+            builder.Entity<TrainerService>()
+                .HasOne(ts => ts.Service)
+                .WithMany(s => s.TrainerServices)
+                .HasForeignKey(ts => ts.ServiceId);
         }
     }
 }

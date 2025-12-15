@@ -1,0 +1,71 @@
+﻿@model IEnumerable<SporSalonu.Models.Appointment>
+
+@{
+    ViewData["Title"] = "Randevularım";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>Randevularım</h1>
+        <a asp-action="Create" class="btn btn-primary">Yeni Randevu Al</a>
+    </div>
+    <hr />
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Success"]
+        </div>
+    }
+
+    <table class="table table-hover table-striped border">
+        <thead class="table-dark">
+            <tr>
+                <th>Tarih</th>
+                <th>Saat</th>
+                <th>Antrenör</th>
+                <th>Hizmet</th>
+                <th>Durum</th>
+                <th>İşlemler</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.AppointmentDate.ToString("dd.MM.yyyy")</td>
+                    <td>@item.AppointmentDate.ToString("HH:00")</td>
+                    <td>@item.Trainer?.FullName</td>
+                    <td>@item.Service?.ServiceName</td>
+                    <td>
+                        @if (item.IsConfirmed)
+                        {
+                            <span class="badge bg-success">Onaylandı</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">Onay Bekliyor</span>
+                        }
+                    </td>
+                    <td>
+                        @if (item.AppointmentDate > DateTime.Now)
+                        {
+                            <form asp-action="Delete" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Randevuyu iptal etmek istediğinize emin misiniz?');">
+                                <button type="submit" class="btn btn-sm btn-danger">İptal Et</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Tamamlandı</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info mt-3">Henüz bir randevu almadınız.</div>
+    }
+</div>

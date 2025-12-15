@@ -1,0 +1,67 @@
+﻿@model SporSalonu.Models.Appointment
+
+@{
+    ViewData["Title"] = "Randevu Al";
+}
+
+<div class="container mt-4">
+    <h1>Randevu Al</h1>
+    <p>Aşağıdan istediğiniz antrenörü, hizmeti ve saati seçerek randevu talebinizi oluşturabilirsiniz. Onay bekleniyor olarak kaydedilecektir.</p>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label fw-bold">Antrenör Seçiniz</label>
+                    <select name="trainerId" class="form-select" required
+                            asp-items="@(new SelectList(ViewBag.Trainers, "Value", "Text"))">
+                        <option value="">-- Antrenör Seçiniz --</option>
+                    </select>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label fw-bold">Hizmet/Branş Seçiniz</label>
+                    <select name="serviceId" class="form-select" required
+                            asp-items="@(new SelectList(ViewBag.Services, "Value", "Text"))">
+                        <option value="">-- Hizmet Seçiniz --</option>
+                    </select>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label fw-bold">Tarih</label>
+                    <input type="date" name="date" class="form-control" required min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                </div>
+
+                <div class="form-group mb-4">
+                    <label class="form-label fw-bold">Saat</label>
+                    <select name="hour" class="form-select" required>
+                        <option value="">-- Saat Seçiniz --</option>
+                        @{
+                            // Mesai saatleri (9:00'dan 20:00'a kadar)
+                            for (int i = 9; i <= 20; i++)
+                            {
+                                // Seçenek formatı: 09:00, 10:00 vb.
+                                <option value="@i">@i:00</option>
+                            }
+                        }
+                    </select>
+                    <small class="text-muted">Randevu saatleri tam saat olarak alınabilir (Örn: 14:00). Sistem, seçtiğiniz antrenörün müsaitlik durumunu kontrol edecektir.</small>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success">Randevu Talep Et</button>
+                    <a asp-action="Index" class="btn btn-secondary">Randevularımı Gör</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

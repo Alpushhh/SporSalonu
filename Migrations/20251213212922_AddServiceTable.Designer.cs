@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SporSalonu.Data;
 
@@ -11,9 +12,11 @@ using SporSalonu.Data;
 namespace SporSalonu.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251213212922_AddServiceTable")]
+    partial class AddServiceTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,6 +50,20 @@ namespace SporSalonu.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "2",
+                            Name = "Uye",
+                            NormalizedName = "UYE"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -134,6 +151,13 @@ namespace SporSalonu.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "a1",
+                            RoleId = "1"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -234,20 +258,36 @@ namespace SporSalonu.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "a1",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "03d49aa7-6a52-4110-a707-699a7475a5cf",
+                            Email = "g232210029@sakarya.edu.tr",
+                            EmailConfirmed = true,
+                            FullName = "Admin Kullanıcı",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "G231210029@SAKARYA.EDU.TR",
+                            NormalizedUserName = "G231210029@SAKARYA.EDU.TR",
+                            PasswordHash = "AQAAAAIAAYagAAAAEB7F6Ztf/5ddcccsQ3lokDW2IrOWDhs71HJYi8JlJN6059ExyB8/NEhHaHbwlw6YuA==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "fb71cca7-b0a2-40bf-adb2-0301668044e4",
+                            TwoFactorEnabled = false,
+                            UserName = "g231210029@sakarya.edu.tr"
+                        });
                 });
 
             modelBuilder.Entity("SporSalonu.Models.Appointment", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("AppointmentId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AppointmentId"));
 
                     b.Property<DateTime>("AppointmentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsConfirmed")
@@ -263,7 +303,7 @@ namespace SporSalonu.Migrations
                     b.Property<int>("TrainerId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("AppointmentId");
 
                     b.HasIndex("MemberId");
 
@@ -322,30 +362,9 @@ namespace SporSalonu.Migrations
                     b.Property<string>("PhotoUrl")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("WorkEndHour")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WorkStartHour")
-                        .HasColumnType("int");
-
                     b.HasKey("TrainerId");
 
                     b.ToTable("Trainers");
-                });
-
-            modelBuilder.Entity("SporSalonu.Models.TrainerService", b =>
-                {
-                    b.Property<int>("TrainerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("int");
-
-                    b.HasKey("TrainerId", "ServiceId");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("TrainerServices");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -426,35 +445,9 @@ namespace SporSalonu.Migrations
                     b.Navigation("Trainer");
                 });
 
-            modelBuilder.Entity("SporSalonu.Models.TrainerService", b =>
-                {
-                    b.HasOne("SporSalonu.Models.Service", "Service")
-                        .WithMany("TrainerServices")
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SporSalonu.Models.Trainer", "Trainer")
-                        .WithMany("TrainerServices")
-                        .HasForeignKey("TrainerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Service");
-
-                    b.Navigation("Trainer");
-                });
-
-            modelBuilder.Entity("SporSalonu.Models.Service", b =>
-                {
-                    b.Navigation("TrainerServices");
-                });
-
             modelBuilder.Entity("SporSalonu.Models.Trainer", b =>
                 {
                     b.Navigation("Appointments");
-
-                    b.Navigation("TrainerServices");
                 });
 #pragma warning restore 612, 618
         }

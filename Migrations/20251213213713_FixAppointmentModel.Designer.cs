@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SporSalonu.Data;
 
@@ -11,9 +12,11 @@ using SporSalonu.Data;
 namespace SporSalonu.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251213213713_FixAppointmentModel")]
+    partial class FixAppointmentModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -322,12 +325,6 @@ namespace SporSalonu.Migrations
                     b.Property<string>("PhotoUrl")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("WorkEndHour")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WorkStartHour")
-                        .HasColumnType("int");
-
                     b.HasKey("TrainerId");
 
                     b.ToTable("Trainers");
@@ -335,15 +332,23 @@ namespace SporSalonu.Migrations
 
             modelBuilder.Entity("SporSalonu.Models.TrainerService", b =>
                 {
-                    b.Property<int>("TrainerId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ServiceId")
                         .HasColumnType("int");
 
-                    b.HasKey("TrainerId", "ServiceId");
+                    b.Property<int>("TrainerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("ServiceId");
+
+                    b.HasIndex("TrainerId");
 
                     b.ToTable("TrainerServices");
                 });
@@ -414,7 +419,7 @@ namespace SporSalonu.Migrations
                         .IsRequired();
 
                     b.HasOne("SporSalonu.Models.Trainer", "Trainer")
-                        .WithMany("Appointments")
+                        .WithMany()
                         .HasForeignKey("TrainerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -452,8 +457,6 @@ namespace SporSalonu.Migrations
 
             modelBuilder.Entity("SporSalonu.Models.Trainer", b =>
                 {
-                    b.Navigation("Appointments");
-
                     b.Navigation("TrainerServices");
                 });
 #pragma warning restore 612, 618

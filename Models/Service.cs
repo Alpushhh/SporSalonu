@@ -6,13 +6,26 @@ namespace SporSalonu.Models
     {
         public int ServiceId { get; set; }
 
+        [Required(ErrorMessage = "Hizmet adı zorunludur.")]
         [Display(Name = "Hizmet Adı")]
-        public string ServiceName { get; set; } // Pilates, Fitness
+        public string ServiceName { get; set; }
 
+        [Display(Name = "Açıklama")]
+        public string? Description { get; set; }
+
+        [Required(ErrorMessage = "Süre girmek zorunludur.")]
         [Display(Name = "Süre (Dakika)")]
-        public int DurationMinutes { get; set; } // Kaç dakika sürdüğü
+        public int DurationMinutes { get; set; }
 
+        [Required(ErrorMessage = "Ücret girmek zorunludur.")]
         [Display(Name = "Ücret (TL)")]
-        public decimal Price { get; set; } // Ücret
+        public decimal Price { get; set; }
+
+        [Display(Name = "Fotoğraf URL")]
+        public string? ImageUrl { get; set; }
+
+        // --- YENİ EKLENEN KISIM ---
+        // Bir hizmeti birden fazla antrenör verebilir
+        public ICollection<TrainerService>? TrainerServices { get; set; }
     }
 }

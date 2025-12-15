@@ -1,21 +1,37 @@
-﻿namespace SporSalonu.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace SporSalonu.Models
 {
     public class Appointment
     {
-        public int AppointmentId { get; set; }
-        public DateTime AppointmentDate { get; set; }
-        public bool IsConfirmed { get; set; } = false; // Onay durumu
+        [Key]
+        public int Id { get; set; }
 
-        // Randevuyu alan Üye
+        // --- DEĞİŞİKLİK 1: Hata 'MemberId' istiyordu, düzelttik ---
         public string MemberId { get; set; }
-        public AppUser Member { get; set; }
 
-        // Seçilen Antrenör
+        [ForeignKey("MemberId")]
+        public AppUser Member { get; set; } // Client yerine Member dedik
+
+        // Hangi antrenör?
         public int TrainerId { get; set; }
+        [ForeignKey("TrainerId")]
         public Trainer Trainer { get; set; }
 
-        // Seçilen Hizmet
+        // Hangi hizmet?
         public int ServiceId { get; set; }
+        [ForeignKey("ServiceId")]
         public Service Service { get; set; }
+
+        // Ne zaman?
+        [Required]
+        public DateTime AppointmentDate { get; set; }
+
+        // --- DEĞİŞİKLİK 2: Hata 'IsConfirmed' istiyordu, düzelttik ---
+        // true = Onaylandı, false = Bekliyor
+        public bool IsConfirmed { get; set; } = false;
+
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
     }
 }
