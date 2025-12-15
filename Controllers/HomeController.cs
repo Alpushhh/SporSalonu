@@ -1,21 +1,33 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using SporSalonu.Data;
 using SporSalonu.Models;
+using System.Diagnostics;
 
 namespace SporSalonu.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ApplicationDbContext context)
         {
-            _logger = logger;
+            _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            // Anasayfa için verileri hazýrlýyoruz
+            var viewModel = new HomeViewModel
+            {
+                // Ýlk 3 Hizmeti Getir
+                Services = await _context.Services.Take(3).ToListAsync(),
+
+                // Ýlk 4 Antrenörü Getir
+                Trainers = await _context.Trainers.Take(4).ToListAsync()
+            };
+
+            return View(viewModel);
         }
 
         public IActionResult Privacy()

@@ -1,8 +1,87 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model SporSalonu.Models.HomeViewModel
+
+@{
+    ViewData["Title"] = "Anasayfa";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="p-5 mb-4 bg-light rounded-3 shadow-sm text-center" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=1470&ixlib=rb-4.0.3') no-repeat center center; background-size: cover; color: white;">
+    <div class="container-fluid py-5">
+        <h1 class="display-4 fw-bold">Hayatını Değiştirmeye Hazır Mısın?</h1>
+        <p class="col-md-8 fs-4 mx-auto">Profesyonel eğitmenler ve son teknoloji ekipmanlarla hedeflerine ulaş.</p>
+
+        @if (!User.Identity.IsAuthenticated)
+        {
+            <a asp-controller="Account" asp-action="Register" class="btn btn-warning btn-lg fw-bold mt-3">Hemen Üye Ol</a>
+        }
+        else
+        {
+            <a asp-controller="Appointments" asp-action="Create" class="btn btn-primary btn-lg fw-bold mt-3">Randevu Al</a>
+        }
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">Popüler Hizmetlerimiz</h2>
+        <p class="text-muted">Size en uygun programı seçin</p>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var item in Model.Services)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0">
+                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                    {
+                        <img src="@item.ImageUrl" class="card-img-top" alt="@item.ServiceName" style="height: 200px; object-fit: cover;">
+                    }
+                    else
+                    {
+                        <img src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?auto=format&fit=crop&q=80&w=1000" class="card-img-top" style="height: 200px; object-fit: cover;">
+                    }
+
+                    <div class="card-body text-center">
+                        <h5 class="card-title fw-bold">@item.ServiceName</h5>
+                        <p class="card-text text-muted">@item.DurationMinutes dakika | @item.Price ₺</p>
+                        <a asp-controller="Services" asp-action="Details" asp-route-id="@item.ServiceId" class="btn btn-outline-primary btn-sm">Detaylar</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="text-center mt-3">
+        <a asp-controller="Services" asp-action="Index" class="btn btn-link text-decoration-none">Tüm Hizmetleri Gör &rarr;</a>
+    </div>
+</div>
+
+<div class="container mb-5 py-5 bg-light rounded">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">Uzman Kadromuz</h2>
+        <p class="text-muted">Alanında en iyi antrenörlerle çalışın</p>
+    </div>
+
+    <div class="row justify-content-center">
+        @foreach (var trainer in Model.Trainers)
+        {
+            <div class="col-lg-3 col-md-4 col-sm-6 text-center mb-4">
+                <div class="card border-0 bg-transparent">
+                    <div class="mx-auto" style="width: 120px; height: 120px; overflow: hidden; border-radius: 50%; border: 3px solid #0d6efd;">
+                        @if (!string.IsNullOrEmpty(trainer.PhotoUrl))
+                        {
+                            <img src="@trainer.PhotoUrl" alt="@trainer.FullName" style="width: 100%; height: 100%; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" style="width: 100%; height: 100%; object-fit: cover;">
+                        }
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title mt-2">@trainer.FullName</h5>
+                        <p class="text-muted small mb-0">@trainer.Expertise</p>
+                        <a asp-controller="Trainers" asp-action="Details" asp-route-id="@trainer.TrainerId" class="text-decoration-none small">Profili İncele</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 </div>
