@@ -24,25 +24,28 @@
                         <div class="mb-3">
                             <label class="form-label fw-bold">Cinsiyet</label>
                             <select name="gender" class="form-select">
-                                <option value="Erkek">Erkek</option>
-                                <option value="Kadın">Kadın</option>
+                                <!option value="Erkek" @(Model?.Gender == "Erkek" ? "selected" : "")>Erkek</!option>
+                                <!option value="Kadın" @(Model?.Gender == "Kadın" ? "selected" : "")>Kadın</!option>
                             </select>
                         </div>
 
                         <div class="row mb-3">
                             <div class="col">
                                 <label class="form-label fw-bold">Yaş</label>
-                                <input type="number" name="age" class="form-control" value="25" required />
+                                <input type="number" name="age" class="form-control"
+                                       value="@(Model?.BirthYear > 0 ? (DateTime.Now.Year - Model.BirthYear) : 25)" required />
                             </div>
                             <div class="col">
                                 <label class="form-label fw-bold">Kilo (kg)</label>
-                                <input type="number" name="weight" class="form-control" value="75" required />
+                                <input type="number" name="weight" class="form-control"
+                                       value="@(Model?.Weight > 0 ? Model.Weight : 75)" required />
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label fw-bold">Boy (cm)</label>
-                            <input type="number" name="height" class="form-control" value="175" required />
+                            <input type="number" name="height" class="form-control"
+                                   value="@(Model?.Height > 0 ? Model.Height : 175)" required />
                         </div>
 
                         <div class="mb-4">
