@@ -40,10 +40,10 @@
                     <select name="hour" class="form-select" required>
                         <option value="">-- Saat Seçiniz --</option>
                         @{
-                            // Mesai saatleri (9:00'dan 20:00'a kadar)
+                            // Mesai saatleri 
                             for (int i = 9; i <= 20; i++)
                             {
-                                // Seçenek formatı: 09:00, 10:00 vb.
+                                
                                 <option value="@i">@i:00</option>
                             }
                         }

@@ -17,13 +17,13 @@ namespace SporSalonu.Controllers
 
         public async Task<IActionResult> Index()
         {
-            // Anasayfa için verileri hazýrlýyoruz
+            
             var viewModel = new HomeViewModel
             {
-                // Ýlk 3 Hizmeti Getir
+                
                 Services = await _context.Services.Take(3).ToListAsync(),
 
-                // Ýlk 4 Antrenörü Getir
+                
                 Trainers = await _context.Trainers.Take(4).ToListAsync()
             };
 

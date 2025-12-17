@@ -6,32 +6,32 @@ using SporSalonu.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Veritabanı
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string not found.");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// 2. Identity (AppUser Kullanarak)
+
 builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-// 3. Şifre ve Login Ayarları
+
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.Password.RequireDigit = false;
     options.Password.RequireLowercase = false;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
-    options.Password.RequiredLength = 3; // Şifre: sau
+    options.Password.RequiredLength = 3; 
 });
 
-// YÖNLENDİRME HATASINI ÇÖZEN KOD:
+
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/Account/Login"; // Yetkisiz girişleri buraya at
+    options.LoginPath = "/Account/Login"; 
     options.AccessDeniedPath = "/Account/AccessDenied";
 });
 
@@ -51,14 +51,14 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication(); // Kimlik Doğrulama
-app.UseAuthorization();  // Yetkilendirme
+app.UseAuthentication(); 
+app.UseAuthorization();  
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// Admin Seeder Çalıştır
+
 using (var scope = app.Services.CreateScope())
 {
     await DbSeeder.SeedRolesAndAdminAsync(scope.ServiceProvider);
@@ -66,7 +66,7 @@ using (var scope = app.Services.CreateScope())
 
 app.Run();
 
-// Boş Email Servisi (Hata almamak için)
+
 public class EmailSender : IEmailSender
 {
     public Task SendEmailAsync(string email, string subject, string htmlMessage) => Task.CompletedTask;

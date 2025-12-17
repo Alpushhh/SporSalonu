@@ -12,7 +12,7 @@ namespace SporSalonu.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
 
-        // API Key (Senin verdiğin key)
+        // API Key 
         private const string ApiKey = "AIzaSyD5bOMOC__orCUZ7_Gp2bjKuK1vH4TksrQ";
 
         public AiController(UserManager<AppUser> userManager)
@@ -29,7 +29,7 @@ namespace SporSalonu.Controllers
         [HttpPost]
         public async Task<IActionResult> GetAdvice(int age, double weight, double height, string gender, string goal)
         {
-            // 1. Kullanıcı bilgilerini güncelle
+            //  Kullanıcı bilgilerini güncelle
             var user = await _userManager.GetUserAsync(User);
             if (user != null)
             {
@@ -40,16 +40,14 @@ namespace SporSalonu.Controllers
                 await _userManager.UpdateAsync(user);
             }
 
-            // --- GÜNCELLEME BURADA ---
-            // 'v1beta' yerine 'v1' kullanıyoruz (Daha kararlı)
-            // Eğer 'gemini-1.5-flash' yine hata verirse burayı "gemini-pro" yaparsın.
+            
             string model = "gemini-2.5-flash";
 
-            // URL yapısı v1 uyumlu hale getirildi
+            
             string connectionUrl = $"https://generativelanguage.googleapis.com/v1/models/{model}:generateContent?key={ApiKey}";
-            // --------------------------
+            
 
-            // 3. Prompt (İstek Metni)
+            //  Prompt 
             string prompt = $@"
                 Sen uzman bir spor hocasısın. Danışan bilgileri:
                 Cinsiyet: {gender}, Yaş: {age}, Kilo: {weight}kg, Boy: {height}cm. Hedef: {goal}.
@@ -98,7 +96,7 @@ namespace SporSalonu.Controllers
                     else
                     {
                         var errorMsg = await response.Content.ReadAsStringAsync();
-                        // Hata mesajını ekrana basıyoruz ki sorunu görelim
+                        
                         ViewBag.Result = $"<div class='alert alert-danger'>Hata: {response.StatusCode}<br>Detay: {errorMsg}</div>";
                     }
                 }

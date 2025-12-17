@@ -65,12 +65,12 @@
                         <div class="row">
                             @if (ViewBag.Services != null)
                             {
-                                // Seçili olanları bir diziye alıyoruz ki kontrol edebilelim
+                                
                                 var selectedIds = (int[])ViewBag.SelectedServices ?? new int[0];
 
                                 @foreach (var service in (List<SporSalonu.Models.Service>)ViewBag.Services)
                                 {
-                                    // Eğer bu hizmet ID'si, hocanın listesinde varsa kutuyu işaretle (checked)
+                                    
                                     var isChecked = selectedIds.Contains(service.ServiceId) ? "checked" : "";
 
                                     <div class="col-md-6">

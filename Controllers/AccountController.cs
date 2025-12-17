@@ -15,9 +15,7 @@ namespace SporSalonu.Controllers
             _signInManager = signInManager;
         }
 
-        // =========================================
-        // KAYIT OLMA (REGISTER)
-        // =========================================
+        
         [HttpGet]
         public IActionResult Register()
         {
@@ -37,7 +35,7 @@ namespace SporSalonu.Controllers
             // 2. Kullanıcıyı oluştur
             var user = new AppUser
             {
-                UserName = email, // Identity UserName olarak Email kullanıyoruz
+                UserName = email, 
                 Email = email,
                 FullName = fullName
             };
@@ -56,7 +54,7 @@ namespace SporSalonu.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            // 6. Hata varsa (Örn: Şifre çok basitse) ekrana yazdır
+            // 6. Hata varsa ekrana yazdır
             foreach (var error in result.Errors)
             {
                 ModelState.AddModelError("", error.Description);
@@ -65,9 +63,7 @@ namespace SporSalonu.Controllers
             return View();
         }
 
-        // =========================================
-        // GİRİŞ YAPMA (LOGIN)
-        // =========================================
+        
         [HttpGet]
         public IActionResult Login()
         {
@@ -83,18 +79,18 @@ namespace SporSalonu.Controllers
                 return View();
             }
 
-            // Kullanıcıyı bul
+            // Kullanıcıyı bulma
             var user = await _userManager.FindByEmailAsync(email);
             if (user != null)
             {
-                // Şifreyi kontrol et
+                // Şifreyi kontrol etme
                 var result = await _signInManager.PasswordSignInAsync(user, password, false, false);
                 if (result.Succeeded)
                 {
-                    // Admin ise Admin paneline, değilse anasayfaya
+                    
                     if (await _userManager.IsInRoleAsync(user, "Admin"))
                     {
-                        return RedirectToAction("Index", "Trainers"); // Örn: Admin paneli
+                        return RedirectToAction("Index", "Trainers"); 
                     }
                     return RedirectToAction("Index", "Home");
                 }
@@ -104,18 +100,14 @@ namespace SporSalonu.Controllers
             return View();
         }
 
-        // =========================================
-        // ÇIKIŞ YAPMA (LOGOUT)
-        // =========================================
+        
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
 
-        // =========================================
-        // YETKİ YOK SAYFASI (ACCESS DENIED)
-        // =========================================
+        
         public IActionResult AccessDenied()
         {
             return View();

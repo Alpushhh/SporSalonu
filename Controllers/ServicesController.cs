@@ -6,7 +6,7 @@ using SporSalonu.Models;
 
 namespace SporSalonu.Controllers
 {
-    // DİKKAT: Buradaki [Authorize] kaldırıldı. Artık herkes sayfayı görebilir.
+    
     public class ServicesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -19,7 +19,7 @@ namespace SporSalonu.Controllers
         }
 
         // GET: Services
-        // Listelemeyi HERKES görebilir (Admin, Üye veya Ziyaretçi)
+        
         public async Task<IActionResult> Index()
         {
             return View(await _context.Services.ToListAsync());
@@ -37,9 +37,7 @@ namespace SporSalonu.Controllers
             return View(service);
         }
 
-        // ==========================================
-        // YÖNETİCİ İŞLEMLERİ (SADECE ADMIN)
-        // ==========================================
+       
 
         // GET: Services/Create
         [Authorize(Roles = "Admin")] // Sadece Admin ekleyebilir
@@ -86,7 +84,7 @@ namespace SporSalonu.Controllers
         }
 
         // GET: Services/Edit/5
-        [Authorize(Roles = "Admin")] // Sadece Admin düzenleyebilir
+        [Authorize(Roles = "Admin")] 
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -138,7 +136,7 @@ namespace SporSalonu.Controllers
         }
 
         // GET: Services/Delete/5
-        [Authorize(Roles = "Admin")] // Sadece Admin silebilir
+        [Authorize(Roles = "Admin")] 
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();

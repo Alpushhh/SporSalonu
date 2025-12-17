@@ -5,7 +5,7 @@ namespace SporSalonu.Models
 {
     public class TrainerService
     {
-        // Composite Key (Birleşik Anahtar) olacak
+        
         public int TrainerId { get; set; }
         public Trainer Trainer { get; set; }
 

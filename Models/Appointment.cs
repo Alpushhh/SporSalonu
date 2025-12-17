@@ -8,28 +8,27 @@ namespace SporSalonu.Models
         [Key]
         public int Id { get; set; }
 
-        // --- DEĞİŞİKLİK 1: Hata 'MemberId' istiyordu, düzelttik ---
+       
         public string MemberId { get; set; }
 
         [ForeignKey("MemberId")]
-        public AppUser Member { get; set; } // Client yerine Member dedik
+        public AppUser Member { get; set; } 
 
-        // Hangi antrenör?
+        // antrenör
         public int TrainerId { get; set; }
         [ForeignKey("TrainerId")]
         public Trainer Trainer { get; set; }
 
-        // Hangi hizmet?
+        // hizmet
         public int ServiceId { get; set; }
         [ForeignKey("ServiceId")]
         public Service Service { get; set; }
 
-        // Ne zaman?
+        // zaman
         [Required]
         public DateTime AppointmentDate { get; set; }
 
-        // --- DEĞİŞİKLİK 2: Hata 'IsConfirmed' istiyordu, düzelttik ---
-        // true = Onaylandı, false = Bekliyor
+        
         public bool IsConfirmed { get; set; } = false;
 
         public DateTime CreatedDate { get; set; } = DateTime.Now;

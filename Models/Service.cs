@@ -24,8 +24,7 @@ namespace SporSalonu.Models
         [Display(Name = "Fotoğraf URL")]
         public string? ImageUrl { get; set; }
 
-        // --- YENİ EKLENEN KISIM ---
-        // Bir hizmeti birden fazla antrenör verebilir
+        
         public ICollection<TrainerService>? TrainerServices { get; set; }
     }
 }

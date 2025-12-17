@@ -1,7 +1,7 @@
 /* --- GENEL AYARLAR --- */
 body {
-    font-family: 'Poppins', sans-serif; /* Modern Font */
-    background-color: #f4f7f6; /* Hafif gri modern arka plan */
+    font-family: 'Poppins', sans-serif; 
+    background-color: #f4f7f6; 
     color: #333;
 }
 
@@ -16,18 +16,18 @@ a {
     transition: all 0.3s ease;
 }
 
-/* --- KART TASARIMI (Cards) --- */
+/* --- KART TASARIMI  --- */
 .card {
     border: none;
-    border-radius: 15px; /* Köþeleri yuvarla */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* Yumuþak gölge */
+    border-radius: 15px; 
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); 
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     background: #fff;
     overflow: hidden;
 }
 
     .card:hover {
-        transform: translateY(-5px); /* Üzerine gelince yukarý kalksýn */
+        transform: translateY(-5px); 
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     }
 
@@ -40,7 +40,7 @@ a {
 
 /* --- BUTONLAR --- */
 .btn {
-    border-radius: 50px; /* Tam oval butonlar */
+    border-radius: 50px; 
     padding: 10px 25px;
     font-weight: 600;
     text-transform: uppercase;
@@ -71,7 +71,7 @@ a {
     border: none;
 }
 
-/* --- TABLOLAR --- */
+
 .table {
     background-color: #fff;
     border-radius: 10px;
@@ -89,17 +89,17 @@ a {
         padding: 1rem;
     }
 
-/* --- NAVBAR (MENÜ) --- */
+
 .navbar {
     box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-    background-color: #fff !important; /* Beyaz Menü */
+    background-color: #fff !important; 
     padding: 1rem 1rem;
 }
 
 .navbar-brand {
     font-weight: 800;
     font-size: 1.5rem;
-    color: #0d6efd !important; /* Marka rengi mavi */
+    color: #0d6efd !important; 
     letter-spacing: -1px;
 }
 

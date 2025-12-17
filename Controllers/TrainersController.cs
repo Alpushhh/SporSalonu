@@ -9,7 +9,7 @@ namespace SporSalonu.Controllers
     public class TrainersController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly IWebHostEnvironment _hostEnvironment; // Resim için gerekli
+        private readonly IWebHostEnvironment _hostEnvironment; 
 
         public TrainersController(ApplicationDbContext context, IWebHostEnvironment hostEnvironment)
         {
@@ -41,9 +41,7 @@ namespace SporSalonu.Controllers
             return View(trainer);
         }
 
-        // ==========================================
-        // CREATE (EKLEME)
-        // ==========================================
+        
         [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
@@ -54,12 +52,12 @@ namespace SporSalonu.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        // DİKKAT: WorkStartHour ve WorkEndHour eklendi, IFormFile eklendi
+        
         public async Task<IActionResult> Create([Bind("TrainerId,FullName,Expertise,WorkStartHour,WorkEndHour")] Trainer trainer, int[] selectedServices, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
             {
-                // Resim Yükleme İşlemi
+                
                 if (imageFile != null)
                 {
                     string wwwRootPath = _hostEnvironment.WebRootPath;
@@ -69,7 +67,7 @@ namespace SporSalonu.Controllers
 
                     string path = Path.Combine(wwwRootPath + "/img/", fileName);
 
-                    // Klasör yoksa oluştur
+                    
                     if (!Directory.Exists(Path.Combine(wwwRootPath + "/img/")))
                     {
                         Directory.CreateDirectory(Path.Combine(wwwRootPath + "/img/"));
@@ -105,9 +103,7 @@ namespace SporSalonu.Controllers
             return View(trainer);
         }
 
-        // ==========================================
-        // EDIT (DÜZENLEME)
-        // ==========================================
+        
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -128,7 +124,7 @@ namespace SporSalonu.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        // DİKKAT: WorkStartHour, WorkEndHour ve PhotoUrl (hidden için) eklendi
+        
         public async Task<IActionResult> Edit(int id, [Bind("TrainerId,FullName,Expertise,WorkStartHour,WorkEndHour,PhotoUrl")] Trainer trainer, int[] selectedServices, IFormFile? imageFile)
         {
             if (id != trainer.TrainerId) return NotFound();
@@ -137,7 +133,7 @@ namespace SporSalonu.Controllers
             {
                 try
                 {
-                    // Yeni resim varsa yükle, yoksa eskisini koru
+                    
                     if (imageFile != null)
                     {
                         string wwwRootPath = _hostEnvironment.WebRootPath;
@@ -156,7 +152,7 @@ namespace SporSalonu.Controllers
                     _context.Update(trainer);
                     await _context.SaveChangesAsync();
 
-                    // Hizmetleri Güncelle (Sil ve Yeniden Ekle)
+                    // Hizmetleri Güncelle 
                     var oldServices = _context.TrainerServices.Where(ts => ts.TrainerId == id);
                     _context.TrainerServices.RemoveRange(oldServices);
                     await _context.SaveChangesAsync();

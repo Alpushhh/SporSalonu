@@ -5,7 +5,7 @@ using SporSalonu.Models;
 
 namespace SporSalonu.Controllers
 {
-    // Bu kod, tarayıcıda /api/trainers adresine gidince çalışır
+    
     [Route("api/trainers")]
     [ApiController]
     public class TrainersApiController : ControllerBase
@@ -21,13 +21,13 @@ namespace SporSalonu.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<object>>> GetTrainers()
         {
-            // Veritabanından hocaları ve verdikleri dersleri çekiyoruz
+            
             var trainers = await _context.Trainers
                 .Include(t => t.TrainerServices)
                 .ThenInclude(ts => ts.Service)
                 .Select(t => new
                 {
-                    // Sadece gerekli bilgileri seçiyoruz (Temiz JSON için)
+                    
                     Id = t.TrainerId,
                     AdSoyad = t.FullName,
                     Uzmanlik = t.Expertise,

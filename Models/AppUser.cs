@@ -6,7 +6,7 @@ namespace SporSalonu.Models
     {
         public string FullName { get; set; }
 
-        // Yapay zeka ve raporlama için gerekli alanlar
+        
         public int? BirthYear { get; set; }
         public double? Weight { get; set; }
         public double? Height { get; set; }

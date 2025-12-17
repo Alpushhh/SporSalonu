@@ -8,7 +8,7 @@ using SporSalonu.Models;
 
 namespace SporSalonu.Controllers
 {
-    [Authorize] // Sadece giriş yapmış kullanıcılar erişebilir
+    [Authorize] 
     public class AppointmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -25,7 +25,7 @@ namespace SporSalonu.Controllers
         {
             var user = await _userManager.GetUserAsync(User);
 
-            // Eğer Admin ise tüm randevuları görsün
+            
             if (await _userManager.IsInRoleAsync(user, "Admin"))
             {
                 var allAppointments = await _context.Appointments
@@ -37,7 +37,7 @@ namespace SporSalonu.Controllers
                 return View("IndexAdmin", allAppointments); // Admin için ayrı view
             }
 
-            // Üye ise sadece kendi randevularını görsün
+            
             var myAppointments = await _context.Appointments
                 .Include(a => a.Trainer)
                 .Include(a => a.Service)
@@ -51,13 +51,13 @@ namespace SporSalonu.Controllers
         // 2. Yeni Randevu Alma Sayfası
         public IActionResult Create()
         {
-            // Dropdownlar için verileri hazırla
+            
             ViewBag.Trainers = new SelectList(_context.Trainers, "TrainerId", "FullName");
             ViewBag.Services = new SelectList(_context.Services, "ServiceId", "ServiceName");
             return View();
         }
 
-        // 3. Randevu Kaydetme (MANTIK BURADA)
+        // 3. Randevu Kaydetme 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int trainerId, int serviceId, DateTime date, int hour)
@@ -79,7 +79,7 @@ namespace SporSalonu.Controllers
                 }
             }
 
-            // 3. O Saatte Başka Randevu Var mı? (Çakışma Kontrolü)
+            // 3. Çakışma Kontrolü
             bool isBusy = await _context.Appointments.AnyAsync(a =>
                 a.TrainerId == trainerId &&
                 a.AppointmentDate == appointmentDateTime);
@@ -99,7 +99,7 @@ namespace SporSalonu.Controllers
                     TrainerId = trainerId,
                     ServiceId = serviceId,
                     AppointmentDate = appointmentDateTime,
-                    IsConfirmed = false, // Varsayılan olarak onaysız
+                    IsConfirmed = false, 
                     CreatedDate = DateTime.Now
                 };
 
@@ -116,7 +116,7 @@ namespace SporSalonu.Controllers
             return View();
         }
 
-        // 4. Randevu Onaylama (Sadece Admin)
+        // 4. Randevu Onaylama 
         [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Approve(int id)
@@ -135,7 +135,7 @@ namespace SporSalonu.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var appointment = await _context.Appointments.FindAsync(id);
-            // Sadece kendi randevusuysa veya Admin ise silebilir
+            
             var user = await _userManager.GetUserAsync(User);
 
             if (appointment != null)
