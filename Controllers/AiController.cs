@@ -12,10 +12,10 @@ namespace SporSalonu.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
 
-        // DİKKAT: Google'dan aldığın API Key'i tırnakların içine yapıştır!
-        private const string ApiKey = "AIzaSyBTMTUDNyK1WwMHGquY3eHUJvBTc5UvMvc";
+        // 🛑 BURAYA YENİ ALDIĞIN API KEY'İ YAPIŞTIR
+        private const string ApiKey = "AIzaSyAAlKPS9BdfnqDufi3Qc1e7Fq_2ka6DGyY";
 
-        // Model adresini güncelledim (gemini-1.5-flash en kararlısı)
+        // Arkadaşının dediği model: gemini-1.5-flash (En güncel ve hızlı olanı)
         private const string ApiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
         public AiController(UserManager<AppUser> userManager)
@@ -30,7 +30,7 @@ namespace SporSalonu.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetAdvice(int age, double weight, double height, string goal)
+        public async Task<IActionResult> GetAdvice(int age, double weight, double height, string gender, string goal)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user != null)
@@ -38,12 +38,22 @@ namespace SporSalonu.Controllers
                 user.BirthYear = DateTime.Now.Year - age;
                 user.Weight = weight;
                 user.Height = height;
+                user.Gender = gender;
                 await _userManager.UpdateAsync(user);
             }
 
-            // Basit Prompt
-            string prompt = $"Ben {age} yaşında, {weight} kg, {height} cm boyundayım. Hedefim: {goal}. Bana kısa bir spor ve beslenme tavsiyesi ver.";
+            // Prompt (İstek)
+            string prompt = $@"
+                Sen uzman bir spor hocasısın. Danışan bilgileri:
+                Cinsiyet: {gender}, Yaş: {age}, Kilo: {weight}kg, Boy: {height}cm. Hedef: {goal}.
+                
+                Lütfen bu kişi için şunları SAF HTML formatında hazırla (Sadece h4, ul, li, strong etiketleri kullan. Markdown ```html blokları koyma):
+                1. <h4>Vücut Analizi</h4> başlığı altında BMI yorumu.
+                2. <h4>Antrenman Programı</h4> başlığı altında 3 maddelik tavsiye.
+                3. <h4>Beslenme Programı</h4> başlığı altında 3 maddelik tavsiye.
+            ";
 
+            // JSON Gövdesi (Google'ın istediği format)
             var requestBody = new
             {
                 contents = new[]
@@ -58,29 +68,36 @@ namespace SporSalonu.Controllers
             {
                 try
                 {
-                    // API Key'i URL'e ekliyoruz
                     var response = await client.PostAsync($"{ApiUrl}?key={ApiKey}",
                         new StringContent(jsonContent, Encoding.UTF8, "application/json"));
 
                     if (response.IsSuccessStatusCode)
                     {
-                        var responseString = await response.Content.ReadAsStringAsync();
-                        using (JsonDocument doc = JsonDocument.Parse(responseString))
+                        var jsonString = await response.Content.ReadAsStringAsync();
+                        using (JsonDocument doc = JsonDocument.Parse(jsonString))
                         {
-                            var text = doc.RootElement.GetProperty("candidates")[0].GetProperty("content").GetProperty("parts")[0].GetProperty("text").GetString();
-                            ViewBag.Result = text.Replace("*", "").Replace("\n", "<br>");
+                            // Cevabı ayıklama
+                            if (doc.RootElement.TryGetProperty("candidates", out var candidates) && candidates.GetArrayLength() > 0)
+                            {
+                                var text = candidates[0].GetProperty("content").GetProperty("parts")[0].GetProperty("text").GetString();
+                                ViewBag.Result = text;
+                            }
+                            else
+                            {
+                                ViewBag.Result = "<div class='alert alert-warning'>Yapay zeka cevap veremedi.</div>";
+                            }
                         }
                     }
                     else
                     {
-                        // HATA DETAYINI OKU
                         var errorMsg = await response.Content.ReadAsStringAsync();
-                        ViewBag.Result = $"HATA OLUŞTU! Kodu: {response.StatusCode}. <br> Detay: {errorMsg}";
+                        // Hata detayını ekrana basıyoruz ki görelim
+                        ViewBag.Result = $"<div class='alert alert-danger'>API Hatası: {response.StatusCode} <br> {errorMsg}</div>";
                     }
                 }
                 catch (Exception ex)
                 {
-                    ViewBag.Result = $"Bağlantı Hatası: {ex.Message}";
+                    ViewBag.Result = $"<div class='alert alert-danger'>Bağlantı Hatası: {ex.Message}</div>";
                 }
             }
 

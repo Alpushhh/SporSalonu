@@ -1,46 +1,62 @@
 ﻿@model SporSalonu.Models.AppUser
 
 @{
-    ViewData["Title"] = "AI Antrenör";
-    // Yaş hesaplama
-    int age = Model.BirthYear.HasValue ? DateTime.Now.Year - Model.BirthYear.Value : 25;
+    ViewData["Title"] = "AI Canlı Destek";
 }
 
-<div class="container mt-4">
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-bold display-5 text-primary">
+            <i class="bi bi-robot"></i> Gemini AI Antrenör
+        </h1>
+        <p class="lead text-muted">Google Yapay Zeka altyapısı ile size özel canlı program.</p>
+    </div>
+
     <div class="row">
         <div class="col-md-4">
-            <div class="card shadow-sm">
+            <div class="card shadow border-0">
                 <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0"><i class="bi bi-robot"></i> AI Antrenör</h4>
+                    <h5 class="mb-0">Bilgilerinizi Girin</h5>
                 </div>
                 <div class="card-body">
-                    <p>Fiziksel bilgilerinizi girin, Yapay Zeka size özel tavsiye versin.</p>
-
                     <form asp-action="GetAdvice" method="post">
+
                         <div class="mb-3">
-                            <label class="form-label">Yaşınız</label>
-                            <input type="number" name="age" class="form-control" value="@age" required />
+                            <label class="form-label fw-bold">Cinsiyet</label>
+                            <select name="gender" class="form-select">
+                                <option value="Erkek">Erkek</option>
+                                <option value="Kadın">Kadın</option>
+                            </select>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Kilo (kg)</label>
-                            <input type="number" name="weight" class="form-control" value="@(Model.Weight ?? 70)" step="0.1" required />
+
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label class="form-label fw-bold">Yaş</label>
+                                <input type="number" name="age" class="form-control" value="25" required />
+                            </div>
+                            <div class="col">
+                                <label class="form-label fw-bold">Kilo (kg)</label>
+                                <input type="number" name="weight" class="form-control" value="75" required />
+                            </div>
                         </div>
+
                         <div class="mb-3">
-                            <label class="form-label">Boy (cm)</label>
-                            <input type="number" name="height" class="form-control" value="@(Model.Height ?? 175)" required />
+                            <label class="form-label fw-bold">Boy (cm)</label>
+                            <input type="number" name="height" class="form-control" value="175" required />
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Hedefiniz</label>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Hedef</label>
                             <select name="goal" class="form-select">
-                                <option value="Kilo Vermek">Kilo Vermek (Yağ Yakımı)</option>
-                                <option value="Kas Yapmak">Kas Yapmak (Hacim)</option>
-                                <option value="Sağlıklı Yaşamak">Fit Kalmak / Kondisyon</option>
+                                <option value="Kilo Vermek">Kilo Vermek</option>
+                                <option value="Kas Yapmak">Kas Yapmak</option>
+                                <option value="Kondisyon Artırmak">Kondisyon / Sağlık</option>
                             </select>
                         </div>
 
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-warning text-dark fw-bold">
-                                <i class="bi bi-stars"></i> Tavsiye Oluştur
+                            <button type="submit" class="btn btn-warning fw-bold">
+                                <i class="bi bi-stars"></i> Yapay Zekaya Sor
                             </button>
                         </div>
                     </form>
@@ -51,23 +67,22 @@
         <div class="col-md-8">
             @if (ViewBag.Result != null)
             {
-                <div class="card border-warning shadow">
-                    <div class="card-header bg-warning text-dark">
-                        <h5 class="mb-0">Gemini AI Tavsiyesi:</h5>
-                    </div>
-                    <div class="card-body bg-light">
-                        <p class="card-text lead" style="font-size: 1.1rem;">
-                            @Html.Raw(ViewBag.Result)
-                        </p>
+                <div class="card shadow border-0 h-100">
+                    <div class="card-body p-5 bg-light" style="border-radius: 15px;">
+                        @Html.Raw(ViewBag.Result)
+
+                        <div class="mt-4 pt-3 border-top text-end">
+                            <small class="text-muted fst-italic">Bu içerik Google Gemini AI tarafından oluşturulmuştur.</small>
+                        </div>
                     </div>
                 </div>
             }
             else
             {
-                <div class="alert alert-info mt-3 mt-md-0">
-                    Henüz bir tavsiye oluşturmadınız. Sol taraftan bilgilerinizi girip butona basın.
-                    <br /><br />
-                    <em>Bu sistem <strong>Google Gemini AI</strong> altyapısını kullanmaktadır.</em>
+                <div class="h-100 d-flex flex-column justify-content-center align-items-center text-muted border rounded bg-white p-5">
+                    <i class="bi bi-chat-square-dots display-1 mb-3 text-secondary"></i>
+                    <h4>Sonuçlar Bekleniyor...</h4>
+                    <p class="text-center">Bilgilerinizi girip butona bastığınızda<br>gerçek zamanlı analiz yapılacaktır.</p>
                 </div>
             }
         </div>
