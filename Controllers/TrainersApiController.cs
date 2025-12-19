@@ -17,7 +17,7 @@ namespace SporSalonu.Controllers
             _context = context;
         }
 
-        // GET: api/trainers
+        
         [HttpGet]
         public async Task<ActionResult<IEnumerable<object>>> GetTrainers()
         {
