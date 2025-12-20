@@ -110,7 +110,7 @@ namespace SporSalonu.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // Hata varsa sayfayı tekrar doldur
+            
             ViewBag.Trainers = new SelectList(_context.Trainers, "TrainerId", "FullName");
             ViewBag.Services = new SelectList(_context.Services, "ServiceId", "ServiceName");
             return View();
