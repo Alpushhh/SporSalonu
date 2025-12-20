@@ -14,7 +14,7 @@ namespace SporSalonu.Controllers
         private readonly UserManager<AppUser> _userManager;
 
         
-        private const string ApiKey = "AIzaSyDp8C-j0vHbTtLuiTP8dVwWy9G2ZrXq3ik";
+        private const string ApiKey = "apikey";
 
         public AiController(UserManager<AppUser> userManager)
         {
