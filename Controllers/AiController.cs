@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SporSalonu.Models;
 using System.Text;
 using System.Text.Json;
+using System.Net; 
 
 namespace SporSalonu.Controllers
 {
@@ -12,8 +13,8 @@ namespace SporSalonu.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
 
-        // API Key 
-        private const string ApiKey = "AIzaSyD5bOMOC__orCUZ7_Gp2bjKuK1vH4TksrQ";
+        
+        private const string ApiKey = "AIzaSyDp8C-j0vHbTtLuiTP8dVwWy9G2ZrXq3ik";
 
         public AiController(UserManager<AppUser> userManager)
         {
@@ -29,7 +30,6 @@ namespace SporSalonu.Controllers
         [HttpPost]
         public async Task<IActionResult> GetAdvice(int age, double weight, double height, string gender, string goal)
         {
-            //  Kullanıcı bilgilerini güncelle
             var user = await _userManager.GetUserAsync(User);
             if (user != null)
             {
@@ -41,41 +41,25 @@ namespace SporSalonu.Controllers
             }
 
             
-            string model = "gemini-2.5-flash";
+            string model = "gemini-2.5-flash"; 
+            string connectionUrl = $"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={ApiKey}";
 
-            
-            string connectionUrl = $"https://generativelanguage.googleapis.com/v1/models/{model}:generateContent?key={ApiKey}";
-            
-
-            //  Prompt 
             string prompt = $@"
-                Sen uzman bir spor hocasısın. Danışan bilgileri:
-                Cinsiyet: {gender}, Yaş: {age}, Kilo: {weight}kg, Boy: {height}cm. Hedef: {goal}.
-                
-                Lütfen bu kişi için şunları SAF HTML formatında hazırla (Sadece h4, ul, li, strong etiketleri kullan. Markdown ```html blokları koyma, sadece saf html kodu ver):
-                1. <h4>Vücut Analizi</h4> başlığı altında BMI yorumu.
-                2. <h4>Antrenman Programı</h4> başlığı altında 3 maddelik tavsiye.
-                3. <h4>Beslenme Programı</h4> başlığı altında 3 maddelik tavsiye.
+                Sen spor hocasısın. Danışan: {gender}, {age} yaş, {weight}kg, {height}cm. Hedef: {goal}.
+                Cevabı SADECE HTML (h4, ul, li) olarak ver. Markdown yok.
+                1. <h4>Analiz</h4>: BMI yorumu.
+                2. <h4>Antrenman</h4>: 3 madde.
+                3. <h4>Beslenme</h4>: 3 madde.
             ";
 
-            // 4. JSON Hazırlığı
-            var requestBody = new
-            {
-                contents = new[]
-                {
-                    new { parts = new[] { new { text = prompt } } }
-                }
-            };
+            var requestBody = new { contents = new[] { new { parts = new[] { new { text = prompt } } } } };
 
-            string jsonContent = JsonSerializer.Serialize(requestBody);
-
-            // 5. Google'a İstek Gönderme
             using (var client = new HttpClient())
             {
                 try
                 {
                     var response = await client.PostAsync(connectionUrl,
-                        new StringContent(jsonContent, Encoding.UTF8, "application/json"));
+                        new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json"));
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -84,27 +68,36 @@ namespace SporSalonu.Controllers
                         {
                             if (doc.RootElement.TryGetProperty("candidates", out var candidates) && candidates.GetArrayLength() > 0)
                             {
-                                var text = candidates[0].GetProperty("content").GetProperty("parts")[0].GetProperty("text").GetString();
-                                ViewBag.Result = text;
+                                ViewBag.Result = candidates[0].GetProperty("content").GetProperty("parts")[0].GetProperty("text").GetString();
                             }
-                            else
-                            {
-                                ViewBag.Result = "<div class='alert alert-warning'>Yapay zeka cevap üretemedi.</div>";
-                            }
+                            else { ViewBag.Result = "Yapay zeka cevap veremedi."; }
                         }
                     }
                     else
                     {
-                        var errorMsg = await response.Content.ReadAsStringAsync();
                         
-                        ViewBag.Result = $"<div class='alert alert-danger'>Hata: {response.StatusCode}<br>Detay: {errorMsg}</div>";
+                        var err = await response.Content.ReadAsStringAsync();
+                        ViewBag.Result = $"API Hatası (Key veya Model): {err}";
                     }
                 }
-                catch (Exception ex)
-                {
-                    ViewBag.Result = $"<div class='alert alert-danger'>Bağlantı Hatası: {ex.Message}</div>";
-                }
+                catch (Exception ex) { ViewBag.Result = "Bağlantı Hatası: " + ex.Message; }
             }
+
+            
+            string englishGender = (gender == "Erkek") ? "man" : "woman";
+            string englishGoal = "fitness";
+
+            if (goal.Contains("Kilo")) englishGoal = "running in park";
+            else if (goal.Contains("Kas")) englishGoal = "bodybuilder in gym";
+            else englishGoal = "yoga in nature";
+
+            string imagePrompt = $"realistic photo of a {englishGender} {englishGoal}, fit body, high quality";
+
+            
+            string seed = new Random().Next(1000, 9999).ToString();
+
+            
+            ViewBag.ImageUrl = $"https://image.pollinations.ai/prompt/{WebUtility.UrlEncode(imagePrompt)}?width=600&height=400&nologo=true&seed={seed}&model=flux";
 
             return View("Index", user);
         }
